@@ -48,6 +48,9 @@ To delete orphan ebook covers, you can add an option `-a clean`.
 
 ![](screenshots/fix-kindle-ebook-cover-cli.png)
 
+Also works on Kindle Scribe (Only verfied on Linux for now)
+![](screenshots/fix-kindle-scribe.png)
+
 ## Technical details
 
 Most of the heavy lifting is done by other people's code, which is included in this repo:
