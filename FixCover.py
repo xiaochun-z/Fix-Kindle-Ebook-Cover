@@ -6,6 +6,9 @@ import glob
 import string
 import sqlite3
 from pathlib import Path
+import tempfile
+import shutil
+import subprocess
 
 from File import MOBIFile
 
@@ -115,8 +118,20 @@ Feedback: %s' % (name, version, feedback)
         return ebook_list.fetchall()
 
     def store_ebook_thumbnail(self, path, data):
-        with open(path, 'wb') as file:
-            file.write(data)
+        if str(path).startswith('/run/user/') and '/mtp:' in str(path):
+            # Write to temp file first
+            with tempfile.NamedTemporaryFile(delete=False) as tmp:
+                tmp.write(data)
+                tmp_path = tmp.name
+            # Use gio copy to move to MTP
+            try:
+                subprocess.run(
+                    ['gio', 'copy', tmp_path, str(path)], check=True)
+            finally:
+                os.remove(tmp_path)
+        else:
+            with open(path, 'wb') as file:
+                file.write(data)
 
     def get_ebook_metadata(self, path):
         asin = cdetype = cover = None
